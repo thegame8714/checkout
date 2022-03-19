@@ -5,6 +5,7 @@ function App() {
   const [name, setName] = useState<string>("")
   const [email, setEmail] = useState<string>("")
   const [rating, setRating] = useState<number>(0)
+  const [comment, setComment] = useState<string>("")
 
   const handleRatingValue: (e: React.ChangeEvent<HTMLInputElement>) => void = (
     e
@@ -12,16 +13,21 @@ function App() {
     setRating(parseInt(e.target.value))
   }
 
-  // useEffect(() => {
-  //   console.log(name, email, rating)
-  // })
+  const latestComments = [
+    {
+      id: "1",
+      name: "Fabio Salimbeni",
+      comment: "This payment system is the best",
+      rating: 5,
+    },
+  ]
 
   return (
     <div className="App">
       <header className="App-header" />
       <main>
         <div>
-          <Label htmlFor="name">Name:</Label>
+          <Label htmlFor="name">Name</Label>
           <Input
             type="text"
             id="name"
@@ -31,7 +37,7 @@ function App() {
           />
         </div>
         <div>
-          <Label htmlFor="email">Email:</Label>
+          <Label htmlFor="email">Email</Label>
           <Input
             type="text"
             id="email"
@@ -41,7 +47,7 @@ function App() {
           />
         </div>
         <div>
-          <Label htmlFor="rating">Rating:</Label>
+          <Label htmlFor="rating">Rating</Label>
           <Input
             type="radio"
             id="rating"
@@ -87,6 +93,23 @@ function App() {
             onChange={handleRatingValue}
           />{" "}
           5
+        </div>
+        <div>
+          <Label htmlFor="comment">Comment</Label>
+          <textarea
+            id="comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Comment"
+          />
+        </div>
+        <div>
+          <span>Latest comments:</span>
+          <div>
+            {latestComments.map((latestComment) => {
+              return <span>{latestComment.name}</span>
+            })}
+          </div>
         </div>
       </main>
     </div>
