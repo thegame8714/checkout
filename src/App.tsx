@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react"
 import styled from "styled-components"
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Legend,
+  Tooltip,
+} from "recharts"
 
 function App() {
   const [name, setName] = useState<string>("")
@@ -19,6 +28,21 @@ function App() {
       name: "Fabio Salimbeni",
       comment: "This payment system is the best",
       rating: 5,
+    },
+  ]
+
+  const data = [
+    {
+      name: "Fabio Salimbeni",
+      rating: 5,
+    },
+    {
+      name: "Giada Zanotti",
+      rating: 4,
+    },
+    {
+      name: "Rocio",
+      rating: 1,
     },
   ]
 
@@ -107,9 +131,18 @@ function App() {
           <span>Latest comments:</span>
           <div>
             {latestComments.map((latestComment) => {
-              return <span>{latestComment.name}</span>
+              return <span key={latestComment.id}>{latestComment.name}</span>
             })}
           </div>
+        </div>
+        <div data-testid="comments-chart">
+          <LineChart width={400} height={300} data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="rating" stroke="#8884d8" />
+          </LineChart>
         </div>
       </main>
     </div>

@@ -27,4 +27,9 @@ describe("Customer Feedback Page", () => {
     const { getByText } = render(<App />)
     expect(getByText("Latest comments:")).toBeInTheDocument()
   })
+
+  it("should render the Latest Comments section", () => {
+    const { getByTestId } = render(<App />)
+    expect(getByTestId("comments-chart")).toBeInTheDocument()
+  })
 })
