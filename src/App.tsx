@@ -1,14 +1,6 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
-import {
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Legend,
-  Tooltip,
-} from "recharts"
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts"
 
 function App() {
   const [name, setName] = useState<string>("")
