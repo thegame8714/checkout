@@ -1,156 +1,134 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts"
+// import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts"
+import CustomInput from "./components/Input"
+import Rating from "./components/Rating"
+import TextArea from "./components/TextArea"
+import initialComments from "./data/initialComments"
+import ProductComment from "./components/ProductComment"
+import type { Comment } from "./interfaces"
+import validateForm from "./helpers/validateForm"
 
 function App() {
   const [name, setName] = useState<string>("")
   const [email, setEmail] = useState<string>("")
   const [rating, setRating] = useState<number>(0)
-  const [comment, setComment] = useState<string>("")
+  const [commentText, setCommentText] = useState<string>("")
+  const [commentList, setCommentList] = useState<Comment[]>(initialComments)
+  const [formHasErrors, setErrorForm] = useState<boolean>(false)
 
-  const handleRatingValue: (e: React.ChangeEvent<HTMLInputElement>) => void = (
-    e
-  ) => {
-    setRating(parseInt(e.target.value))
+  const RatingValues: string[] = ["1", "2", "3", "4", "5"]
+
+  const handleNameChange: (value: string) => void = (value) => setName(value)
+  const handleEmailChange: (value: string) => void = (value) => setEmail(value)
+  const handleRatingValue: (value: number) => void = (value) => setRating(value)
+  const handleCommentChange: (value: string) => void = (value) =>
+    setCommentText(value)
+
+  useEffect(() => {}, [commentList])
+
+  const addComment = () => {
+    const isRateValid = validateForm(name, email, rating, commentText)
+    if (isRateValid) {
+      const newComment = {
+        id: `${Math.random() * 10000}`,
+        author: name,
+        email,
+        date: new Date().toLocaleString(),
+        rating,
+        comment: commentText,
+      }
+      setCommentList([...commentList, newComment])
+    } else {
+      setErrorForm(true)
+    }
   }
-
-  const latestComments = [
-    {
-      id: "1",
-      name: "Fabio Salimbeni",
-      comment: "This payment system is the best",
-      rating: 5,
-    },
-  ]
-
-  const data = [
-    {
-      name: "Fabio Salimbeni",
-      rating: 5,
-    },
-    {
-      name: "Giada Zanotti",
-      rating: 4,
-    },
-    {
-      name: "Rocio",
-      rating: 1,
-    },
-  ]
-
   return (
     <div className="App">
       <header className="App-header" />
       <main>
+        <CustomInput
+          name="Name"
+          onInputChange={handleNameChange}
+          value={name}
+        />
+        <CustomInput
+          name="Email"
+          onInputChange={handleEmailChange}
+          value={email}
+        />
         <div>
-          <Label htmlFor="name">Name</Label>
-          <Input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Name"
-          />
+          <VisibleLabel htmlFor="rating">Rate this product:</VisibleLabel>
+          {RatingValues.map((ratingValue) => {
+            return (
+              <Rating
+                key={ratingValue}
+                name="rating"
+                onInputChange={handleRatingValue}
+                value={ratingValue}
+                checked={parseInt(ratingValue) === rating}
+              />
+            )
+          })}
+        </div>
+        <TextArea
+          name="Comment"
+          onInputChange={handleCommentChange}
+          value={commentText}
+        />
+        <div>
+          {formHasErrors && (
+            <ErrorMessage>
+              Please fill all the fields correctly before adding your comment!
+            </ErrorMessage>
+          )}
         </div>
         <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            type="text"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-          />
+          <button onClick={addComment}>Add comment</button>
         </div>
-        <div>
-          <Label htmlFor="rating">Rating</Label>
-          <Input
-            type="radio"
-            id="rating"
-            name="1"
-            value="1"
-            checked={rating === 1}
-            onChange={handleRatingValue}
-          />{" "}
-          1
-          <Input
-            type="radio"
-            id="rating"
-            name="2"
-            value="2"
-            checked={rating === 2}
-            onChange={handleRatingValue}
-          />{" "}
-          2
-          <Input
-            type="radio"
-            id="rating"
-            name="3"
-            value="3"
-            checked={rating === 3}
-            onChange={handleRatingValue}
-          />{" "}
-          3
-          <Input
-            type="radio"
-            id="rating"
-            name="4"
-            value="4"
-            checked={rating === 4}
-            onChange={handleRatingValue}
-          />{" "}
-          4
-          <Input
-            type="radio"
-            id="rating"
-            name="5"
-            value="5"
-            checked={rating === 5}
-            onChange={handleRatingValue}
-          />{" "}
-          5
-        </div>
-        <div>
-          <Label htmlFor="comment">Comment</Label>
-          <textarea
-            id="comment"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Comment"
-          />
-        </div>
-        <div>
+        <LatestComment>
           <span>Latest comments:</span>
-          <div>
-            {latestComments.map((latestComment) => {
-              return <span key={latestComment.id}>{latestComment.name}</span>
-            })}
+          <div data-testid="comments-chart">
+            {commentList.map((latestComment) => (
+              <ProductComment
+                key={latestComment.id}
+                singleComment={latestComment}
+              />
+            ))}
           </div>
-        </div>
-        <div data-testid="comments-chart">
-          <LineChart width={400} height={300} data={data}>
+        </LatestComment>
+        {/* <div data-testid="comments-chart">
+          <LineChart width={400} height={300} data={initialComments}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
             <Line type="monotone" dataKey="rating" stroke="#8884d8" />
           </LineChart>
-        </div>
+        </div> */}
       </main>
     </div>
   )
 }
 
-const Label = styled.label`
-  display: none;
+const VisibleLabel = styled.label`
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
 `
 
-const Input = styled.input`
-  border-radius: 5px;
-  border: 1px solid black;
+const ErrorMessage = styled.div`
+  border: 1px solid red;
   padding: 5px;
-  line-height: 16px;
+  color: red;
   font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-weight: 600;
+`
+
+const LatestComment = styled.div`
+  margin-top: 10px;
 `
 
 export default App
