@@ -4,7 +4,7 @@ import App from "./App"
 import userEvent from "@testing-library/user-event"
 
 describe("Customer Feedback Page", () => {
-  describe.skip("render", () => {
+  describe("render", () => {
     it("should render the Name field", () => {
       const { getByLabelText } = render(<App />)
       expect(getByLabelText("Name")).toBeInTheDocument()
@@ -17,7 +17,7 @@ describe("Customer Feedback Page", () => {
 
     it("should render the Rating field", () => {
       const { getByLabelText } = render(<App />)
-      expect(getByLabelText("Rate this product")).toBeInTheDocument()
+      expect(getByLabelText(/Rate this product/)).toBeInTheDocument()
     })
 
     it("should render the Comment field", () => {
@@ -30,10 +30,10 @@ describe("Customer Feedback Page", () => {
       expect(getByText("Latest comments:")).toBeInTheDocument()
     })
 
-    // it("should render the Latest Comments section", () => {
-    //   const { getByTestId } = render(<App />)
-    //   expect(getByTestId("comments-chart")).toBeInTheDocument()
-    // })
+    it("should render the Comments chart section", () => {
+      const { getByTestId } = render(<App />)
+      expect(getByTestId("comments-chart")).toBeInTheDocument()
+    })
 
     it("should render the Add comment button", () => {
       const { getByText } = render(<App />)
@@ -47,13 +47,19 @@ describe("Customer Feedback Page", () => {
       user = userEvent.setup()
     })
     it("should add a comment when the user click on the Add comment button", async () => {
-      const { getByLabelText, getByText, getAllByText } = render(<App />)
+      const { getByLabelText, getByText, getByRole } = render(<App />)
       const nameInput = getByLabelText("Name")
+      const emailInput = getByLabelText("Email")
+      const ratingInput = getByRole("radio", { name: "Rate this product:" })
+      const commentInput = getByLabelText("Comment")
       const addButton = getByText("Add comment")
       await userEvent.type(nameInput, "Ron")
+      await userEvent.type(emailInput, "test@test.com")
+      await userEvent.type(commentInput, "Test Comment")
+      await userEvent.click(ratingInput)
       await userEvent.click(addButton)
 
-      expect(getAllByText(/Ron/).length).toBe(2)
+      expect(getByText(/Ron/)).toBeInTheDocument()
     })
   })
 })

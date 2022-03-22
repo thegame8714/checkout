@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-escape */
+
 const validateForm: (
   name: string,
   email: string,

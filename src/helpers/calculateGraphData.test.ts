@@ -1,6 +1,7 @@
-import type { Comment } from "../interfaces/"
+import { Comment } from "../interfaces"
+import calculateGraphData from "./calculateGraphData"
 
-let initialComments: Comment[] = [
+const initialComments: Comment[] = [
   {
     id: `${Math.random() * 10000}`,
     author: "Fabio Salimbeni",
@@ -33,14 +34,20 @@ let initialComments: Comment[] = [
     rating: 3,
     comment: "This is an ok product",
   },
-  {
-    id: `${Math.random() * 10000}`,
-    author: "Dawid",
-    email: "fabio.salimbeni@gmail.com",
-    date: "04/03/2022",
-    rating: 1,
-    comment: "This is a bad product",
-  },
 ]
 
-export default initialComments
+describe("calculateGraphData", () => {
+  it("should do its job", () => {
+    const graphDate = calculateGraphData(initialComments)
+    expect(graphDate).toEqual([
+      {
+        date: "01/03/2022",
+        avgRating: "3.33",
+      },
+      {
+        date: "04/03/2022",
+        avgRating: "3.00",
+      },
+    ])
+  })
+})

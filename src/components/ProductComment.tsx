@@ -9,16 +9,17 @@ const ProductComment: React.FC<ProductCommentProps> = ({ singleComment }) => {
     starRating = starRating + "⭐"
   }
 
-  const formatDate = (date: Date) => {
-    return `${date.getUTCDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
-  }
+  //   const formatDate = (date: Date) => {
+  //     console.log(date)
+  //     return `${date.getUTCDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+  //   }
 
   return (
     <StyledComment>
       <Rating>{starRating}</Rating>
       <CommentText>{singleComment.comment}</CommentText>
       <CommentMeta>
-        By: {singleComment.author} on {formatDate(new Date(singleComment.date))}
+        By: {singleComment.author} on {singleComment.date}
       </CommentMeta>
     </StyledComment>
   )
